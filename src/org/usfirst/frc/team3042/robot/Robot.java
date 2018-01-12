@@ -31,11 +31,6 @@ public class Robot extends IterativeRobot {
 	
 	/** Create Subsystems *****************************************************/
 	private Logger log = new Logger(LOG_LEVEL, "Robot");
-	public static final Drivetrain 	drivetrain 	= (HAS_DRIVETRAIN) 	? new Drivetrain() 	: null;
-	public static final PanTilt 	panTilt 	= (HAS_PAN_TILT) 	? new PanTilt() 	: null;
-	public static final Spinner 	spinner 	= (HAS_SPINNER) 	? new Spinner() 	: null;
-	public static final Gyroscope 	gyroscope 	= (HAS_GYROSCOPE) 	? new Gyroscope() 	: null;
-	public static final LightRing 	lightRing 	= (HAS_LIGHT_RING) 	? new LightRing() 	: null;
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static OI oi;
 
@@ -48,7 +43,7 @@ public class Robot extends IterativeRobot {
 	 * used for any initialization code.
 	 */
 	public void robotInit() {
-		log.add("Robot Init", Log.Level.TRACE);
+		log.add("Robot Init", Logger.Level.TRACE);
 		
 		oi = new OI();
 		chooser.addDefault("Default Auto", new ExampleCommand());
@@ -63,7 +58,7 @@ public class Robot extends IterativeRobot {
 	 * the robot is disabled.
 	 */
 	public void disabledInit() {
-		log.add("Disabled Init", Log.Level.TRACE);
+		log.add("Disabled Init", Logger.Level.TRACE);
 	}
 
 	

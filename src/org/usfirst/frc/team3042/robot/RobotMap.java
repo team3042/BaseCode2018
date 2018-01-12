@@ -10,12 +10,13 @@ import org.usfirst.frc.team3042.lib.Logger;
  */
 public class RobotMap {
 	/** Robot selector ********************************************************/
-	public static enum Bot {PBOT, ARTEMIS;}
+	public static enum Bot {PBOT, PRIMARY, SECONDARY;}
 	// Set the bot to which you intend to push code.
 	private static Bot currentBot = Bot.PBOT;
 
 	public static final boolean IS_PBOT 	= (currentBot == Bot.PBOT);
-	public static final boolean IS_ARTEMIS = (currentBot == Bot.ARTEMIS);
+	public static final boolean IS_PRIMARY = (currentBot == Bot.PRIMARY);
+	public static final boolean IS_SECONDARY = (currentBot == Bot.SECONDARY);
 	
 	
 	/** Robot Size Parameters *************************************************
@@ -40,13 +41,13 @@ public class RobotMap {
 	
 	/** CAN ID numbers ********************************************************/
 	public static final int CAN_LEFT_MOTOR 	= 		IS_PBOT 	? 3 :
-													IS_ARTEMIS 	? 0 : 0;
+													IS_PRIMARY 	? 0 : 0;
 	public static final int CAN_RIGHT_MOTOR = 		IS_PBOT 	? 9 :
-													IS_ARTEMIS 	? 0 : 0;
-	public static final int CAN_LEFT_FOLLOWER = 	IS_ARTEMIS 	? 0 : 0;
-	public static final int CAN_RIGHT_FOLLOWER = 	IS_ARTEMIS 	? 0 : 0;
+													IS_PRIMARY 	? 0 : 0;
+	public static final int CAN_LEFT_FOLLOWER = 	IS_PRIMARY 	? 0 : 0;
+	public static final int CAN_RIGHT_FOLLOWER = 	IS_PRIMARY 	? 0 : 0;
 	public static final int CAN_SPINNER 	= 		IS_PBOT		? 10 :
-													IS_ARTEMIS 	? 0 : 0;
+													IS_PRIMARY 	? 0 : 0;
 	
 	
 	/** PCM channels **********************************************************/
@@ -69,9 +70,9 @@ public class RobotMap {
 	// Maximum Acceleration given in power per second
 	public static final double ACCELERATION_MAX = 1.5;
 	public static final double kF_DRIVE_LEFT = 	(IS_PBOT) 		? 1.02 :
-												(IS_ARTEMIS) 	? 0.0 : 0.0;
+												(IS_PRIMARY) 	? 0.0 : 0.0;
 	public static final double kF_DRIVE_RIGHT = (IS_PBOT) 		? 0.774 :
-												(IS_ARTEMIS) 	? 0.0 : 0.0;
+												(IS_PRIMARY) 	? 0.0 : 0.0;
 	
 	
 	/** Drivetrain Encoder Settings *******************************************/
@@ -89,13 +90,13 @@ public class RobotMap {
 	public static final boolean HAS_AUTON = HAS_ENCODERS;
 	public static final int AUTON_PROFILE = 0;
 	public static final double kP_AUTON = 		(IS_PBOT) 		? 0.4 :
-												(IS_ARTEMIS) 	? 0.0 : 0.0;
+												(IS_PRIMARY) 	? 0.0 : 0.0;
 	public static final double kI_AUTON = 		(IS_PBOT) 		? 0.0 :
-												(IS_ARTEMIS) 	? 0.0 : 0.0;
+												(IS_PRIMARY) 	? 0.0 : 0.0;
 	public static final double kD_AUTON = 		(IS_PBOT) 		? 0.8 :
-												(IS_ARTEMIS) 	? 0.0 : 0.0;
+												(IS_PRIMARY) 	? 0.0 : 0.0;
 	public static final int I_ZONE_AUTON =		(IS_PBOT)		? 0 :
-												(IS_ARTEMIS)	? 0 : 0;
+												(IS_PRIMARY)	? 0 : 0;
 	//The rate of pushing motion profile points to the talon, in ms
 	public static final int AUTON_FRAME_RATE = 5;
 	//Parameters for calibrating the F-gain

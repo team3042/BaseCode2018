@@ -10,7 +10,7 @@ import org.usfirst.frc.team3042.lib.Path;
 public class OI {	
 	/** Configuration Constants ***********************************************/
 	private static final boolean IS_PBOT = RobotMap.IS_PBOT;
-	private static final boolean IS_ARTEMIS = RobotMap.IS_ARTEMIS;
+	private static final boolean IS_ARTEMIS = RobotMap.IS_PRIMARY;
 	private static final int USB_GAMEPAD = RobotMap.USB_GAMEPAD;
 	private static final int USB_JOY_LEFT = RobotMap.USB_JOYSTICK_LEFT;
 	private static final int USB_JOY_RIGHT = RobotMap.USB_JOYSTICK_RIGHT;
@@ -44,7 +44,7 @@ public class OI {
 	 * gamepad.POVUp.whileActive(new ExampleCommand());
 	 */
 	public OI() {
-		log.add("OI Constructor", Log.Level.TRACE);
+		log.add("OI Constructor", Logger.Level.TRACE);
 		
 		gamepad = new Gamepad(USB_GAMEPAD);
 		
@@ -64,27 +64,7 @@ public class OI {
 		
 		/** PBOT Controls *****************************************************/
 		if (IS_PBOT) {
-			gamepad.A.toggleWhenPressed(new LightRing_On());
-			gamepad.LB.toggleWhenPressed(new Spinner_SetPosition());
-			gamepad.RB.toggleWhenPressed(new Spinner_SetSpeed());
 			
-			gamepad.X.whenPressed(new Drivetrain_GyroStraight(48.0, 24.0));
-			
-			Path testPath = new Path();
-			testPath.addStraight(36.0, 18.0);
-			testPath.addRightTurn(90.0, 1.5, 21.0);
-			testPath.addLeftTurn(120, 1.5, 21.0);
-			testPath.addLeftTurn(120, 1.5, -21.0);
-			testPath.addRightTurn(90.0, 1.5, -21.0);
-			testPath.addStraight(36.0, -18.0);
-			gamepad.B.whenPressed(new DrivetrainAuton_Drive(testPath));
-			
-			Path testPath2 = new Path();
-			testPath2.addLeftTurn(380.0, 0.5, 21.0);
-			testPath2.addRightTurn(420.0, 0.5, 21.0);
-			//gamepad.Y.whenPressed(new DrivetrainAuton_Drive(testPath2));
-			
-			gamepad.Y.whenPressed(new Drivetrain_GyroTurn(270.0));
 		}
 		
 		/** Artemis Controls **************************************************/
