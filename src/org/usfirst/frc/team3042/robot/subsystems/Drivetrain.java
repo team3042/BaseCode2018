@@ -5,6 +5,8 @@ import org.usfirst.frc.team3042.robot.RobotMap;
 import org.usfirst.frc.team3042.robot.commands.Drivetrain_TankDrive;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -20,18 +22,18 @@ public class Drivetrain extends Subsystem {
 	private static final boolean HAS_FOLLOWERS = RobotMap.HAS_FOLLOWERS;
 	private static final boolean HAS_ENCODERS = RobotMap.HAS_ENCODERS;
 	private static final boolean HAS_AUTON = RobotMap.HAS_AUTON;
-	private static final boolean BRAKE_MODE = RobotMap.DRIVETRAIN_BRAKE_MODE;
+	private static final NeutralMode BRAKE_MODE = RobotMap.DRIVETRAIN_BRAKE_MODE;
 	private static final boolean REVERSE_LEFT_MOTOR = RobotMap.REVERSE_LEFT_MOTOR;
 	private static final boolean REVERSE_RIGHT_MOTOR = RobotMap.REVERSE_RIGHT_MOTOR;
 	
 	
 	/** Instance Variables ****************************************************/
-	Logger log = new Logger(LOG_LEVEL, getName());
-	TalonSRX leftMotor = new TalonSRX(CAN_LEFT_MOTOR);
-	TalonSRX rightMotor = new TalonSRX(CAN_RIGHT_MOTOR);
-	DrivetrainFollowers followers;
-	DrivetrainEncoders encoders;
-	DrivetrainAuton auton;
+	private Logger log = new Logger(LOG_LEVEL, getName());
+	private TalonSRX leftMotor = new TalonSRX(CAN_LEFT_MOTOR);
+	private TalonSRX rightMotor = new TalonSRX(CAN_RIGHT_MOTOR);
+	private DrivetrainFollowers followers;
+	private DrivetrainEncoders encoders;
+	private DrivetrainAuton auton;
 
 	
 	/** Drivetrain ************************************************************
@@ -52,9 +54,9 @@ public class Drivetrain extends Subsystem {
 		initMotor(rightMotor, REVERSE_RIGHT_MOTOR);
 	}
 	private void initMotor(TalonSRX motor, boolean reverse) {
-		motor.enableBrakeMode(BRAKE_MODE);
+		motor.setNeutralMode(BRAKE_MODE);
 		motor.setInverted(reverse); 	// affects percent Vbus mode
-		motor.reverseOutput(reverse); 	// affects closed-loop mode
+		motor.setSensorPhase(reverse); 	// affects closed-loop mode
 	}
 	
 	
@@ -71,11 +73,8 @@ public class Drivetrain extends Subsystem {
 		leftPower = safetyCheck(leftPower);
 		rightPower = safetyCheck(rightPower);
 				
-		leftMotor.changeControlMode(TalonControlMode.PercentVbus);
-		rightMotor.changeControlMode(TalonControlMode.PercentVbus);
-
-		leftMotor.set(leftPower);
-		rightMotor.set(rightPower);		
+		leftMotor.set(ControlMode.PercentOutput, leftPower);
+		rightMotor.set(ControlMode.PercentOutput, rightPower);		
 	}
 	public void stop() {
 		setPower(0.0, 0.0);

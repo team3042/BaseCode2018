@@ -4,6 +4,8 @@ import org.usfirst.frc.team3042.lib.Logger;
 import org.usfirst.frc.team3042.robot.RobotMap;
 import org.usfirst.frc.team3042.robot.commands.DrivetrainEncoders_Dashboard;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -19,6 +21,8 @@ public class DrivetrainEncoders extends Subsystem {
 	private static final int FRAME_RATE = RobotMap.ENCODER_FRAME_RATE;
 	private static final boolean REVERSE_LEFT = RobotMap.REVERSE_LEFT_ENCODER;
 	private static final boolean REVERSE_RIGHT = RobotMap.REVERSE_RIGHT_ENCODER;
+	private static final int PIDIDX = RobotMap.PIDIDX;
+	private static final int TIMEOUT = RobotMap.TALON_ERROR_TIMEOUT;
 
 	
 	/** Instance Variables ****************************************************/
@@ -41,10 +45,9 @@ public class DrivetrainEncoders extends Subsystem {
 		reset();
 	}
 	private void initEncoder(TalonSRX encoder, boolean reverse) {
-		encoder.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		encoder.setStatusFrameRateMs(TalonSRX.StatusFrameRate.QuadEncoder, FRAME_RATE);
-		encoder.configEncoderCodesPerRev(COUNTS_PER_REVOLUTION);
-		encoder.reverseSensor(reverse);
+		encoder.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, PIDIDX, TIMEOUT);
+		encoder.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, FRAME_RATE, TIMEOUT);
+		encoder.setSensorPhase(reverse);
 	}
 	
 	
@@ -58,11 +61,8 @@ public class DrivetrainEncoders extends Subsystem {
 	
 	/** reset *****************************************************************/
 	public void reset() {
-		leftPositionZero = leftEncoder.getPosition();
-		rightPositionZero = rightEncoder.getPosition();
-				
-		leftCountsZero = leftEncoder.getEncPosition();
-		rightCountsZero = rightEncoder.getEncPosition();
+		leftPositionZero = leftEncoder.getSelectedSensorPosition(PIDIDX);
+		rightPositionZero = rightEncoder.getSelectedSensorPosition(PIDIDX);
 	}
 	public void setToZero() {
 		leftPositionZero = 0.0;
@@ -80,22 +80,16 @@ public class DrivetrainEncoders extends Subsystem {
 	 * Encoder speed returns counts per 100ms - getEncSpeed()
 	 */
 	public double getLeftPosition() {
-		return leftEncoder.getPosition() - leftPositionZero;
+		return (leftEncoder.getSelectedSensorPosition(PIDIDX) - leftPositionZero) / COUNTS_PER_REVOLUTION;
 	}
 	public double getRightPosition() {
-		return rightEncoder.getPosition() - rightPositionZero;
-	}
-	public int getLeftCounts() {
-		return leftEncoder.getEncPosition() - leftCountsZero;
-	}
-	public int getRightCounts() {
-		return rightEncoder.getEncPosition() - leftCountsZero;
+		return (rightEncoder.getSelectedSensorPosition(PIDIDX) - rightPositionZero) / COUNTS_PER_REVOLUTION;
 	}
 	public double getLeftSpeed() {
-		return leftEncoder.getSpeed();
+		return leftEncoder.getSelectedSensorVelocity(PIDIDX) * 600 / COUNTS_PER_REVOLUTION;//600/COUNTS_PER_REVOLUTION conversion from counts per 100 ms to rpm
 	}
 	public double getRightSpeed() {
-		return rightEncoder.getSpeed();
+		return rightEncoder.getSelectedSensorVelocity(PIDIDX) * 600 / COUNTS_PER_REVOLUTION;//600/COUNTS_PER_REVOLUTION conversion from counts per 100 ms to rpm
 	}
 	
 	

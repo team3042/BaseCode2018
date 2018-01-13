@@ -3,6 +3,7 @@ package org.usfirst.frc.team3042.robot.subsystems;
 import org.usfirst.frc.team3042.lib.Logger;
 import org.usfirst.frc.team3042.robot.RobotMap;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -34,8 +35,7 @@ public class DrivetrainFollowers extends Subsystem {
 		initMotor(rightFollower, CAN_RIGHT_MOTOR);
 	}
 	private void initMotor(TalonSRX motor, int leaderCANid) {
-		motor.changeControlMode(TalonControlMode.Follower);
-		motor.set(leaderCANid);
+		motor.set(ControlMode.Follower, leaderCANid);
 	}
 	
 	

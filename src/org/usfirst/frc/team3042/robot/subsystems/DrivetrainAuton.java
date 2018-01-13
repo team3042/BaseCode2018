@@ -3,6 +3,10 @@ package org.usfirst.frc.team3042.robot.subsystems;
 import org.usfirst.frc.team3042.lib.Logger;
 import org.usfirst.frc.team3042.robot.RobotMap;
 
+import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.SetValueMotionProfile;
+import com.ctre.phoenix.motion.TrajectoryPoint;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Notifier;
@@ -24,6 +28,9 @@ public class DrivetrainAuton extends Subsystem {
 	private static final int I_ZONE = RobotMap.I_ZONE_AUTON;
 	//The Frame Rate is given in ms
 	private static final int FRAME_RATE = RobotMap.AUTON_FRAME_RATE;
+	private static final int TIMEOUT = RobotMap.TALON_ERROR_TIMEOUT;
+	private static final int SLOTIDX_1 = RobotMap.SLOTIDX_1;
+	private static final int TRAJPERIOD = RobotMap.TRAJPERIOD;
 
 	
 	/** Periodic Runnable *****************************************************
@@ -64,10 +71,11 @@ public class DrivetrainAuton extends Subsystem {
 	}
 	private void initMotor(TalonSRX motor, double kF) {
 		motor.changeMotionControlFramePeriod(FRAME_RATE);
-		motor.setProfile(PID_PROFILE);
-		motor.setPID(kP, kI, kD);
-		motor.setF(kF);
-		motor.setIZone(I_ZONE);
+		motor.config_kP(SLOTIDX_1, kP, TIMEOUT);
+		motor.config_kI(SLOTIDX_1, kI, TIMEOUT);
+		motor.config_kD(SLOTIDX_1, kD, TIMEOUT);
+		motor.config_kF(SLOTIDX_1, kF, TIMEOUT);
+		motor.config_IntegralZone(SLOTIDX_1, I_ZONE, TIMEOUT);
 	}
 	
 	
@@ -91,14 +99,14 @@ public class DrivetrainAuton extends Subsystem {
 	}
 	private void initMotor(TalonSRX motor) {
 		motor.clearMotionProfileTrajectories();
-		motor.setProfile(PID_PROFILE);
-		motor.changeControlMode(TalonControlMode.MotionProfile);
+		
+		motor.configMotionProfileTrajectoryPeriod(TRAJPERIOD, TIMEOUT);
 	}
 	
 	
 	/** Motion Profile command methods ****************************************/
-	public void pushPoints(	TalonSRX.TrajectoryPoint leftPoint, 
-							TalonSRX.TrajectoryPoint rightPoint) {
+	public void pushPoints(	TrajectoryPoint leftPoint, 
+							TrajectoryPoint rightPoint) {
 		leftMotor.pushMotionProfileTrajectory(leftPoint);
 		rightMotor.pushMotionProfileTrajectory(rightPoint);
 	}
@@ -113,25 +121,25 @@ public class DrivetrainAuton extends Subsystem {
 		return status;
 	}
 	public void removeLeftUnderrun() {
-		leftMotor.clearMotionProfileHasUnderrun();
+		//leftMotor.clearMotionProfileHasUnderrun();
 	}
 	public void removeRightUnderrun() {
-		rightMotor.clearMotionProfileHasUnderrun();
+		//rightMotor.clearMotionProfileHasUnderrun();
 	}
 	private void removeUnderrun() {
 		removeLeftUnderrun();
 		removeRightUnderrun();
 	}
 	public void enableMotionProfile() {
-		leftMotor.set(TalonSRX.SetValueMotionProfile.Enable.value);
-		rightMotor.set(TalonSRX.SetValueMotionProfile.Enable.value);
+		leftMotor.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
+		rightMotor.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
 	}
 	public void holdMotionProfile() {
-		leftMotor.set(TalonSRX.SetValueMotionProfile.Hold.value);
-		rightMotor.set(TalonSRX.SetValueMotionProfile.Hold.value);
+		leftMotor.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
+		rightMotor.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
 	}
 	public void disableMotionProfile() {
-		leftMotor.set(TalonSRX.SetValueMotionProfile.Disable.value);
-		rightMotor.set(TalonSRX.SetValueMotionProfile.Disable.value);
+		leftMotor.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
+		leftMotor.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
 	}
 }

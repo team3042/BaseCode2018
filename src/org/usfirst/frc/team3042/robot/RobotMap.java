@@ -2,6 +2,8 @@ package org.usfirst.frc.team3042.robot;
 
 import org.usfirst.frc.team3042.lib.Logger;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
  * to a variable name. This provides flexibility changing wiring, makes checking
@@ -64,7 +66,7 @@ public class RobotMap {
 	/** Drivetrain Settings ***************************************************/
 	public static final boolean HAS_DRIVETRAIN = true;
 	public static final boolean HAS_FOLLOWERS = !IS_PBOT;
-	public static final boolean DRIVETRAIN_BRAKE_MODE = true;
+	public static final NeutralMode DRIVETRAIN_BRAKE_MODE = NeutralMode.Brake;
 	public static final boolean REVERSE_LEFT_MOTOR = 	(IS_PBOT) ? true : false;
 	public static final boolean REVERSE_RIGHT_MOTOR = 	(IS_PBOT) ? false: false;
 	// Maximum Acceleration given in power per second
@@ -73,6 +75,10 @@ public class RobotMap {
 												(IS_PRIMARY) 	? 0.0 : 0.0;
 	public static final double kF_DRIVE_RIGHT = (IS_PBOT) 		? 0.774 :
 												(IS_PRIMARY) 	? 0.0 : 0.0;
+	public static final int TALON_ERROR_TIMEOUT = 0;// measured in Ms
+	public static final int TRAJPERIOD = 10;
+	public static final int PIDIDX = 0; //pidIdx - 0 for Primary closed-loop. 1 for cascaded closed-loop. See Phoenix-Documentation for how to interpret.
+	public static final int SLOTIDX_1 = 0;
 	
 	
 	/** Drivetrain Encoder Settings *******************************************/

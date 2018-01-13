@@ -4,6 +4,7 @@ import org.usfirst.frc.team3042.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motion.TrajectoryPoint;
+import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 
 /** MotionProfile *************************************************************
  * All distances are assumed to be in revolutions.
@@ -17,6 +18,7 @@ public class MotionProfile {
 	private static final double ACCEL_TIME = RobotMap.AUTON_ACCEL_TIME;
 	private static final double SMOOTH_TIME = RobotMap.AUTON_SMOOTH_TIME;
 	private static final double MAX_ACCEL = RobotMap.AUTON_MAX_ACCEL;
+	private static final int SLOTIDX_1 = RobotMap.SLOTIDX_1;
 	
 	
 	/** Instance Variables ****************************************************/
@@ -131,25 +133,24 @@ public class MotionProfile {
 		trajectory = new TrajectoryPoint[length];
 		
 		for (int n=0; n<length; n++) {
-			trajectory[n] = new CANTalon.TrajectoryPoint();
-			trajectory[n].timeDurMs = (int)(DT * 1000.0); //convert to ms for Talon
+			trajectory[n] = new TrajectoryPoint();
+			trajectory[n].timeDur = TrajectoryDuration.Trajectory_Duration_10ms;// individual points are equal, see configMotionProfileTrajectoryPeriod in DrivetrainAuton
 			trajectory[n].position = position[n];
 			trajectory[n].velocity = velocity[n] * 60.0; //convert to rpm for Talon
-			trajectory[n].profileSlotSelect = PROFILE;
-			trajectory[n].velocityOnly = false;
+			trajectory[n].profileSlotSelect0 = SLOTIDX_1;
 			trajectory[n].zeroPos = (n == 0);
 			trajectory[n].isLastPoint = (n == length-1);
 		}
 	}
 	
 	/** getPoint **************************************************************/
-	public TalonSRX.TrajectoryPoint getPoint(int n) {
-		TalonSRX.TrajectoryPoint point = null;
+	public TrajectoryPoint getPoint(int n) {
+		TrajectoryPoint point = null;
 		if ( (n>= 0) && (n<getLength()) ) {
 			point = trajectory[n];
 		}
 		else {
-			log.add("Array out of bounds: getPoint()", Log.Level.ERROR);
+			log.add("Array out of bounds: getPoint()", Logger.Level.ERROR);
 		}
 		return point;
 	}
