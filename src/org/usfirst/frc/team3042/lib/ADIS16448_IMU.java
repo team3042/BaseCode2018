@@ -6,27 +6,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 //import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
 //import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 //import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
-import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-//import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.InterruptableSensorBase;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This class is for the ADIS16448 IMU that connects to the RoboRIO MXP port.
  */
-public class ADIS16448_IMU extends GyroBase implements Gyro, PIDSource, LiveWindowSendable {
+public class ADIS16448_IMU extends GyroBase implements Gyro, PIDSource, Sendable {
   private static final double kTimeout = 0.1;
   private static final double kCalibrationSampleTime = 5.0;
   private static final double kDegreePerSecondPerLSB = 1.0/25.0;
@@ -117,7 +117,7 @@ public class ADIS16448_IMU extends GyroBase implements Gyro, PIDSource, LiveWind
   private AtomicBoolean m_freed = new AtomicBoolean(false);
 
   private SPI m_spi;
-  //private DigitalOutput m_reset;
+  private DigitalOutput m_reset;
   private DigitalInput m_interrupt;
 
   // Sample from the IMU
@@ -131,8 +131,8 @@ public class ADIS16448_IMU extends GyroBase implements Gyro, PIDSource, LiveWind
     public double mag_x;
     public double mag_y;
     public double mag_z;
-    //public double baro;
-    //public double temp;
+    public double baro;
+    public double temp;
     public double dt;
 
     // Swap axis as appropriate for yaw axis selection
@@ -244,13 +244,13 @@ public class ADIS16448_IMU extends GyroBase implements Gyro, PIDSource, LiveWind
     }
 
     // Set IMU internal decimation to 204.8 SPS
-    writeRegister(kRegSMPL_PRD, 201);
+    writeRegister(kRegSMPL_PRD, 0x0201);
 
     // Enable Data Ready (LOW = Good Data) on DIO1 (PWM0 on MXP) & PoP
-    writeRegister(kRegMSC_CTRL, 0x44);
+    writeRegister(kRegMSC_CTRL, 0x0044);
 
     // Configure IMU internal Bartlett filter
-    writeRegister(kRegSENS_AVG, 400);
+    writeRegister(kRegSENS_AVG, 0x0400);
 
     // Read serial number and lot ID
     //m_serial_num = readRegister(kRegSERIAL_NUM);
@@ -447,8 +447,8 @@ public class ADIS16448_IMU extends GyroBase implements Gyro, PIDSource, LiveWind
           sample.mag_x = mag_x;
           sample.mag_y = mag_y;
           sample.mag_z = mag_z;
-          //sample.baro = baro;
-          //sample.temp = temp;
+          sample.baro = baro;
+          sample.temp = temp;
           sample.dt = dt;
           m_samples_put_index += 1;
           if (m_samples_put_index == m_samples.length) {
@@ -1075,19 +1075,33 @@ public class ADIS16448_IMU extends GyroBase implements Gyro, PIDSource, LiveWind
    * {@inheritDoc}
    */
   @Override
-  public void updateTable() {
-    ITable table = getTable();
-    if (table != null) {
-      table.putNumber("Value", getAngle());
-      table.putNumber("Pitch", getPitch());
-      table.putNumber("Roll", getRoll());
-      table.putNumber("Yaw", getYaw());
-      table.putNumber("AccelX", getAccelX());
-      table.putNumber("AccelY", getAccelY());
-      table.putNumber("AccelZ", getAccelZ());
-      table.putNumber("AngleX", getAngleX());
-      table.putNumber("AngleY", getAngleY());
-      table.putNumber("AngleZ", getAngleZ());
-    }
+  public void initSendable(SendableBuilder builder) {
+	  builder.setSmartDashboardType("ADIS16448 IMU");
+	  final NetworkTableEntry value = builder.getEntry("Value");
+	  final NetworkTableEntry pitch = builder.getEntry("Pitch");
+	  final NetworkTableEntry roll = builder.getEntry("Roll");
+	  final NetworkTableEntry yaw = builder.getEntry("Yaw");
+	  final NetworkTableEntry accelX = builder.getEntry("AccelX");
+	  final NetworkTableEntry accelY = builder.getEntry("AccelY");
+	  final NetworkTableEntry accelZ = builder.getEntry("AccelZ");
+	  final NetworkTableEntry angleX = builder.getEntry("AngleX");
+	  final NetworkTableEntry angleY = builder.getEntry("AngleY");
+	  final NetworkTableEntry angleZ = builder.getEntry("AngleZ");
+	  
+	  builder.setUpdateTable(new Runnable() {
+		@Override
+		public void run() {
+			value.setDouble(getAngle());
+			pitch.setDouble(getPitch());
+			roll.setDouble(getRoll());
+			yaw.setDouble(getYaw());
+			accelX.setDouble(getAccelX());
+			accelY.setDouble(getAccelY());
+			accelZ.setDouble(getAccelZ());
+			angleX.setDouble(getAngleX());
+			angleY.setDouble(getAngleY());
+			angleZ.setDouble(getAngleZ());
+		} 
+	  });
   }
 }

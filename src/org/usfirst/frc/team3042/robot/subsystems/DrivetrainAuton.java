@@ -31,7 +31,7 @@ public class DrivetrainAuton extends Subsystem {
 	private static final int TIMEOUT = RobotMap.TALON_ERROR_TIMEOUT;
 	private static final int SLOTIDX_1 = RobotMap.SLOTIDX_1;
 	private static final int TRAJPERIOD = RobotMap.TRAJPERIOD;
-
+	
 	
 	/** Periodic Runnable *****************************************************
 	 * Create a separate thread to push motion profile points out to the Talon

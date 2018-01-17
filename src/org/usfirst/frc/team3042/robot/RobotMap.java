@@ -176,7 +176,7 @@ public class RobotMap {
 	
 	/** Gyroscope Settings ****************************************************/
 	public static final boolean HAS_GYROSCOPE = true;
-	public static final double GYROSCOPE_SCALE = 0.25;
+	public static final double GYROSCOPE_SCALE = 1;
 	
 	
 	/** LEDRing Settings ******************************************************/

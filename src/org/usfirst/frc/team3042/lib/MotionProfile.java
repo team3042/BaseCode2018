@@ -19,6 +19,8 @@ public class MotionProfile {
 	private static final double SMOOTH_TIME = RobotMap.AUTON_SMOOTH_TIME;
 	private static final double MAX_ACCEL = RobotMap.AUTON_MAX_ACCEL;
 	private static final int SLOTIDX_1 = RobotMap.SLOTIDX_1;
+	private static final int C_PER_REV = RobotMap.COUNTS_PER_REVOLUTION;
+
 	
 	
 	/** Instance Variables ****************************************************/
@@ -136,7 +138,7 @@ public class MotionProfile {
 			trajectory[n] = new TrajectoryPoint();
 			trajectory[n].timeDur = TrajectoryDuration.Trajectory_Duration_10ms;// individual points are equal, see configMotionProfileTrajectoryPeriod in DrivetrainAuton
 			trajectory[n].position = position[n];
-			trajectory[n].velocity = velocity[n] * 60.0; //convert to rpm for Talon
+			trajectory[n].velocity = velocity[n] / 10.0 * C_PER_REV; //convert to counts per 100 Ms for Talon
 			trajectory[n].profileSlotSelect0 = SLOTIDX_1;
 			trajectory[n].zeroPos = (n == 0);
 			trajectory[n].isLastPoint = (n == length-1);
